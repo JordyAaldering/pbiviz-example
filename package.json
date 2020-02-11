@@ -9,7 +9,8 @@
   "dependencies": {
     "core-js": "^3.6.4",
     "d3": "^5.15.0",
-    "powerbi-visuals-api": "^2.6.2"
+    "powerbi-visuals-api": "^2.6.2",
+    "powerbi-visuals-utils-dataviewutils": "^2.2.1"
   },
   "devDependencies": {
     "@types/d3": "^5.7.2",
