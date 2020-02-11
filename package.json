@@ -4,7 +4,10 @@
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
     "package": "pbiviz package",
-    "lint": "tslint -c tslint.json -p tsconfig.json"
+    "typings": "node node_modules/typings/dist/bin.js i",
+    "lint": "tslint -r \"node_modules/tslint-microsoft-contrib\"  \"+(src|test)/**/*.ts\"",
+    "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
+    "test": "karma start"
   },
   "dependencies": {
     "core-js": "^3.6.4",
