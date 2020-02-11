@@ -2,49 +2,79 @@
 
 import "core-js/stable";
 import "./../style/visual.less";
-import powerbi from "powerbi-visuals-api";
 
+import powerbi from "powerbi-visuals-api";
+import IVisual = powerbi.extensibility.visual.IVisual;
+import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-import IVisual = powerbi.extensibility.visual.IVisual;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
-import DataView = powerbi.DataView;
+import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
 
+import * as d3 from "d3";
 import { VisualSettings } from "./settings";
 
+type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
+
 export class Visual implements IVisual {
-    private target: HTMLElement;
-    private updateCount: number;
+    private host: IVisualHost;
     private settings: VisualSettings;
-    private textNode: Text;
+
+    private svg: Selection<SVGElement>;
+    private container: Selection<SVGElement>;
+    private circle: Selection<SVGElement>;
+    private textValue: Selection<SVGElement>;
+    private textLabel: Selection<SVGElement>;
 
     constructor(options: VisualConstructorOptions) {
-        console.log('Visual constructor', options);
-        this.target = options.element;
-        this.updateCount = 0;
-        if (document) {
-            const new_p: HTMLElement = document.createElement("p");
-            new_p.appendChild(document.createTextNode("Update count:"));
-            const new_em: HTMLElement = document.createElement("em");
-            this.textNode = document.createTextNode(this.updateCount.toString());
-            new_em.appendChild(this.textNode);
-            new_p.appendChild(new_em);
-            this.target.appendChild(new_p);
-        }
+        this.svg = d3.select(options.element)
+            .append('svg')
+            .classed('circleCard', true);
+        this.container = this.svg.append("g")
+            .classed('container', true);
+        this.circle = this.container.append("circle")
+            .classed('circle', true);
+        this.textValue = this.container.append("text")
+            .classed("textValue", true);
+        this.textLabel = this.container.append("text")
+            .classed("textLabel", true);
     }
 
     public update(options: VisualUpdateOptions) {
-        this.settings = Visual.parseSettings(options && options.dataViews && options.dataViews[0]);
-        console.log('Visual update', options);
-        if (this.textNode) {
-            this.textNode.textContent = (this.updateCount++).toString();
-        }
-    }
+        let width: number = options.viewport.width;
+        let height: number = options.viewport.height;
 
-    private static parseSettings(dataView: DataView): VisualSettings {
-        return <VisualSettings>VisualSettings.parse(dataView);
+        this.svg.attr("width", width);
+        this.svg.attr("height", height);
+
+        let radius: number = Math.min(width, height) / 2.2;
+        this.circle
+            .style("fill", "white")
+            .style("fill-opacity", 0.5)
+            .style("stroke", "black")
+            .style("stroke-width", 2)
+            .attr("r", radius)
+            .attr("cx", width / 2)
+            .attr("cy", height / 2);
+        
+        let fontSizeValue: number = Math.min(width, height) / 5;
+        this.textValue
+            .text("Value")
+            .attr("x", "50%")
+            .attr("y", "50%")
+            .attr("dy", "0.35em")
+            .attr("text-anchor", "middle")
+            .style("font-size", fontSizeValue + "px");
+        
+        let fontSizeLabel: number = fontSizeValue / 4;
+        this.textLabel
+            .text("Label")
+            .attr("x", "50%")
+            .attr("y", height / 2)
+            .attr("dy", fontSizeValue / 1.2)
+            .attr("text-anchor", "middle")
+            .style("font-size", fontSizeLabel + "px");
     }
 
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
