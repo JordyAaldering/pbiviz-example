@@ -8,6 +8,8 @@ import IVisual = powerbi.extensibility.visual.IVisual;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
+
+import DataView = powerbi.DataView;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
@@ -42,6 +44,7 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
+        let dataView: DataView = options.dataViews[0];
         let width: number = options.viewport.width;
         let height: number = options.viewport.height;
 
@@ -60,7 +63,7 @@ export class Visual implements IVisual {
         
         let fontSizeValue: number = Math.min(width, height) / 5;
         this.textValue
-            .text("Value")
+            .text(<string>dataView.single.value)
             .attr("x", "50%")
             .attr("y", "50%")
             .attr("dy", "0.35em")
@@ -69,7 +72,7 @@ export class Visual implements IVisual {
         
         let fontSizeLabel: number = fontSizeValue / 4;
         this.textLabel
-            .text("Label")
+            .text(dataView.metadata.columns[0].displayName)
             .attr("x", "50%")
             .attr("y", height / 2)
             .attr("dy", fontSizeValue / 1.2)
