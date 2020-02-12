@@ -20,6 +20,7 @@
 
 .bar {
     fill: var(--data-color);
+    cursor: pointer;
 }
 
 .tick line {
@@ -34,10 +35,16 @@
 
 .title {
     fill: var(--text-main-color);
+    text-anchor: middle;
     font-size: 32px;
 }
 
 .label {
     fill: var(--text-main-color);
     font-size: 20px;
+}
+
+text {
+    pointer-events: none;
+    cursor: default;
 }

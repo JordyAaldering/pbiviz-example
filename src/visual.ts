@@ -103,7 +103,7 @@ export class Visual implements IVisual {
 
         // Set text labels.
         this.titleText
-            .attr("x", innerWidth * 0.5)
+            .attr("x", width * 0.5)
             .text(this.settings.chart.chartTitle);
                 
         this.labelText
