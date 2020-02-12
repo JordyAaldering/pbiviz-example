@@ -2,34 +2,20 @@
 
 import "../style/visual.less";
 import * as d3 from "d3";
+
 import { VisualSettings } from "./settings";
+import { ViewModel, Model } from "./model";
 
 import powerbi from "powerbi-visuals-api";
 import IVisual = powerbi.extensibility.visual.IVisual;
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-
-// Data loading.
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-
-// Selection.
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import ISelectionManager = powerbi.extensibility.ISelectionManager;
-import ISelectionId = powerbi.extensibility.ISelectionId;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
-
-export interface DataPoint {
-    category: string;
-    value: number;
-    identity: ISelectionId;
-};
-
-export interface ViewModel {
-    dataPoints: DataPoint[];
-    maxValue: number;
-};
 
 export class Visual implements IVisual {
     private host: IVisualHost;
@@ -81,7 +67,7 @@ export class Visual implements IVisual {
 
     public update(options: VisualUpdateOptions) {
         // Load data and settings.
-        const viewModel: ViewModel = this.getViewModel(options.dataViews);
+        const viewModel: ViewModel = Model.getViewModel(this.host, options.dataViews);
         this.settings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
 
         // Calculate dimensions.
@@ -158,35 +144,6 @@ export class Visual implements IVisual {
 
         bars.exit()
             .remove();
-    }
-
-    private getViewModel(dataViews: powerbi.DataView[]): ViewModel {
-        let viewModel: ViewModel = {
-            dataPoints: [],
-            maxValue: 0
-        };
-
-        if (!dataViews || !dataViews[0] || !dataViews[0].categorical || 
-            !dataViews[0].categorical.categories || !dataViews[0].categorical.values) {
-            return viewModel;
-        }
-
-        let view = dataViews[0].categorical;
-        let categories = view.categories[0];
-        let values = view.values[0];
-
-        for (let i = 0; i < Math.max(categories.values.length, values.values.length); i++) {
-            viewModel.dataPoints.push({
-                category: <string>categories.values[i],
-                value: <number>values.values[i],
-                identity: this.host.createSelectionIdBuilder()
-                    .withCategory(categories, i)
-                    .createSelectionId()
-            });
-        }
-
-        viewModel.maxValue = d3.max(viewModel.dataPoints, d => d.value);
-        return viewModel;
     }
 
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
