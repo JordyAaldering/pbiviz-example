@@ -81,7 +81,7 @@ export class Visual implements IVisual {
 
     public update(options: VisualUpdateOptions) {
         // Load data and settings.
-        const viewModel: ViewModel = this.getViewModel(options);
+        const viewModel: ViewModel = this.getViewModel(options.dataViews);
         this.settings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
 
         // Calculate dimensions.
@@ -160,18 +160,18 @@ export class Visual implements IVisual {
             .remove();
     }
 
-    private getViewModel(options: VisualUpdateOptions): ViewModel {
-        let dv = options.dataViews;
+    private getViewModel(dataViews: powerbi.DataView[]): ViewModel {
         let viewModel: ViewModel = {
             dataPoints: [],
             maxValue: 0
         };
 
-        if (!dv || !dv[0] || !dv[0].categorical || !dv[0].categorical.categories || !dv[0].categorical.values) {
+        if (!dataViews || !dataViews[0] || !dataViews[0].categorical || 
+            !dataViews[0].categorical.categories || !dataViews[0].categorical.values) {
             return viewModel;
         }
 
-        let view = dv[0].categorical;
+        let view = dataViews[0].categorical;
         let categories = view.categories[0];
         let values = view.values[0];
 
