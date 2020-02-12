@@ -1,7 +1,12 @@
 {
     "dataRoles": [
         {
-            "displayName": "Measure",
+            "displayName": "Category Data",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measure Data",
             "name": "measure",
             "kind": "Measure"
         }
@@ -36,13 +41,29 @@
         {
             "conditions": [
                 {
+                    "category": {
+                        "max": 1
+                    },
                     "measure": {
                         "max": 1
                     }
                 }
             ],
-            "single": {
-                "role": "measure"
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "measure"
+                            }
+                        }
+                    ]
+                }
             }
         }
     ]
