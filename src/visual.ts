@@ -3,21 +3,29 @@
 import "core-js/stable";
 import "../style/visual.less";
 
+import * as d3 from "d3";
+import { VisualSettings } from "./settings";
+
 import powerbi from "powerbi-visuals-api";
 import IVisual = powerbi.extensibility.visual.IVisual;
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
+
+// Data loading.
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
-import * as d3 from "d3";
-import { VisualSettings } from "./settings";
+// Selection.
+import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+import ISelectionManager = powerbi.extensibility.ISelectionManager;
+import ISelectionId = powerbi.extensibility.ISelectionId;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
 export interface DataPoint {
     category: string;
     value: number;
+    identity: ISelectionId;
 };
 
 export interface ViewModel {
@@ -26,18 +34,23 @@ export interface ViewModel {
 };
 
 export class Visual implements IVisual {
+    private host: IVisualHost;
     private settings: VisualSettings;
+    private selection: ISelectionManager;
 
     private svg: Selection<SVGElement>;
     private chartContainer: Selection<SVGElement>;
     private xAxisContainer: Selection<SVGElement>;
     private yAxisContainer: Selection<SVGElement>;
 
-    private margin = { top: 45, right: 15, bottom: 45, left: 100 };
+    private margin = { top: 50, right: 15, bottom: 45, left: 100 };
     private titleText: Selection<SVGElement>;
     private labelText: Selection<SVGElement>;
 
     constructor(options: VisualConstructorOptions) {
+        this.host = options.host;
+        this.selection = this.host.createSelectionManager();
+
         // Add root svg element.
         this.svg = d3.select(options.element)
             .append("svg")
@@ -70,7 +83,7 @@ export class Visual implements IVisual {
 
     public update(options: VisualUpdateOptions) {
         // Load data and settings.
-        const viewModel = this.getViewModel(options);
+        const viewModel: ViewModel = this.getViewModel(options);
         this.settings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
 
         // Calculate dimensions.
@@ -125,13 +138,28 @@ export class Visual implements IVisual {
                 .remove();
         
         // Set bars.
-        this.chartContainer.selectAll("rect")
+        let bars = this.chartContainer.selectAll(".bar")
             .data(viewModel.dataPoints).enter()
             .append("rect")
                 .attr("width", d => xScale(d.value))
                 .attr("height", yScale.bandwidth())
                 .attr("y", d => yScale(d.category))
-                .classed("rect", true);
+                .classed("bar", true);
+        
+        // Set bar selection.
+        bars.on("click", d => {
+            this.selection.select(d.identity, true)
+                .then(ids => {
+                    bars.style("fill-opacity", d =>
+                        ids.length > 0 
+                            ? ids.indexOf(d.identity) >= 0 ? 1.0 : 0.5
+                            : 1.0
+                    );
+                });
+        });
+
+        bars.exit()
+            .remove();
     }
 
     private getViewModel(options: VisualUpdateOptions): ViewModel {
@@ -152,7 +180,10 @@ export class Visual implements IVisual {
         for (let i = 0; i < Math.max(categories.values.length, values.values.length); i++) {
             viewModel.dataPoints.push({
                 category: <string>categories.values[i],
-                value: <number>values.values[i]
+                value: <number>values.values[i],
+                identity: this.host.createSelectionIdBuilder()
+                    .withCategory(categories, i)
+                    .createSelectionId()
             });
         }
 
