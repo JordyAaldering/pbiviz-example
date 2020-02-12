@@ -5,19 +5,13 @@ import "../style/visual.less";
 
 import powerbi from "powerbi-visuals-api";
 import IVisual = powerbi.extensibility.visual.IVisual;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-
-import DataView = powerbi.DataView;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
-
-import * as d3 from "d3";
-
-import { VisualSettings } from "./settings";
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+
+import * as d3 from "d3";
+import { VisualSettings } from "./settings";
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
@@ -39,6 +33,7 @@ export class Visual implements IVisual {
     private xAxisContainer: Selection<SVGElement>;
     private yAxisContainer: Selection<SVGElement>;
 
+    private margin = { top: 45, right: 15, bottom: 45, left: 100 };
     private titleText: Selection<SVGElement>;
     private labelText: Selection<SVGElement>;
 
@@ -74,26 +69,28 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
+        // Load data and settings.
         const viewModel = this.getViewModel(options);
         this.settings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
 
-        const margin = { 
-            top: 45,
-            right: 15,
-            bottom: 45,
-            left: 100
-        };
-        
+        // Calculate dimensions.
         const width: number = options.viewport.width;
         const height: number = options.viewport.height;
-        const innerWidth = width - margin.left - margin.right;
-        const innerHeight = height - margin.top - margin.bottom;
+        const innerWidth = width - this.margin.left - this.margin.right;
+        const innerHeight = height - this.margin.top - this.margin.bottom;
 
-        this.svg.attr("width", width).attr("height", height);
+        // Set container dimensions.
+        this.svg
+            .attr("width", width)
+            .attr("height", height);
+
+        this.chartContainer
+            .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`);
         
-        this.chartContainer.attr("transform", `translate(${margin.left}, ${margin.top})`);
-        this.xAxisContainer.attr("transform", `translate(0, ${innerHeight})`);
+        this.xAxisContainer
+            .attr("transform", `translate(0, ${innerHeight})`);
 
+        // Set text labels.
         this.titleText
             .attr("x", innerWidth * 0.5)
             .text(this.settings.chart.chartTitle);
@@ -102,6 +99,7 @@ export class Visual implements IVisual {
             .attr("x", innerWidth * 0.5)
             .text(this.settings.chart.chartXLabel);
 
+        // Calculate axes.
         const xScale = d3.scaleLinear()
             .domain([0, viewModel.maxValue])
             .range([0, innerWidth]);
@@ -111,17 +109,22 @@ export class Visual implements IVisual {
             .range([0, innerHeight])
             .padding(0.1);
         
+        // Set axes.
         const xAxis = d3.axisBottom(xScale)
             .tickFormat(d3.format(".1s"))
             .tickSize(-innerHeight);
-        const yAxis = d3.axisLeft(yScale);
     
-        this.xAxisContainer.call(xAxis);
-        this.yAxisContainer.call(yAxis);
-
-        this.xAxisContainer.selectAll(".domain").remove();
-        this.yAxisContainer.selectAll(".domain, .tick line").remove();
+        this.xAxisContainer
+            .call(xAxis)
+            .selectAll(".domain")
+                .remove();
         
+        this.yAxisContainer
+            .call(d3.axisLeft(yScale))
+            .selectAll(".domain, .tick line")
+                .remove();
+        
+        // Set bars.
         this.chartContainer.selectAll("rect")
             .data(viewModel.dataPoints).enter()
             .append("rect")
