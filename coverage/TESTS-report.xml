@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<testsuite name="HeadlessChrome 80.0.3987 (Windows 10.0.0)" package="" timestamp="2020-02-12T09:17:41" id="0" hostname="DESKTOP-5G02I1V" tests="1" errors="0" failures="0" time="0.01">
+<testsuite name="HeadlessChrome 80.0.3987 (Windows 10.0.0)" package="" timestamp="2020-02-12T14:31:44" id="0" hostname="DESKTOP-5G02I1V" tests="1" errors="0" failures="0" time="0.007">
   <properties>
     <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/80.0.3987.0 Safari/537.36"/>
   </properties>
-  <testcase name="Visual root DOM element is created" time="0.01" classname="Visual"/>
+  <testcase name="Visual root DOM element is created" time="0.007" classname="Visual"/>
   <system-out>
     <![CDATA[
 ]]>

@@ -19,6 +19,6 @@ export class VisualBuilder extends VisualBuilderBase<VisualClass> {
     }
 
     public get mainElement() {
-        return this.element.children("svg.barChart");
+        return this.element.children("svg");
     }
 }

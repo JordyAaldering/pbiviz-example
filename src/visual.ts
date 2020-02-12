@@ -1,8 +1,6 @@
 "use strict";
 
-import "core-js/stable";
 import "../style/visual.less";
-
 import * as d3 from "d3";
 import { VisualSettings } from "./settings";
 
