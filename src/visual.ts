@@ -90,6 +90,7 @@ export class Visual implements IVisual {
         const innerHeight = height - margin.top - margin.bottom;
 
         this.svg.attr("width", width).attr("height", height);
+        
         this.chartContainer.attr("transform", `translate(${margin.left}, ${margin.top})`);
         this.xAxisContainer.attr("transform", `translate(0, ${innerHeight})`);
 
