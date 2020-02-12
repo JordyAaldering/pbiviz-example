@@ -1,9 +1,71 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="0" lines-covered="0" line-rate="NaN" branches-valid="0" branches-covered="0" branch-rate="NaN" timestamp="1581497402870" complexity="0" version="0.1">
+<coverage lines-valid="25" lines-covered="6" line-rate="0.24" branches-valid="2" branches-covered="0" branch-rate="0" timestamp="1581499061217" complexity="0" version="0.1">
   <sources>
     <source>C:\Users\Aalde\Documents\pbiviz-example</source>
   </sources>
   <packages>
+    <class name="settings.ts" filename="src\settings.ts" line-rate="0.25" branch-rate="1">
+      <methods>
+        <method name="(anonymous_0)" hits="0" signature="()V">
+          <lines>
+            <line number="6" hits="0"/>
+          </lines>
+        </method>
+        <method name="(anonymous_1)" hits="0" signature="()V">
+          <lines>
+            <line number="10" hits="0"/>
+          </lines>
+        </method>
+      </methods>
+      <lines>
+        <line number="4" hits="1" branch="false"/>
+        <line number="7" hits="0" branch="false"/>
+        <line number="11" hits="0" branch="false"/>
+        <line number="12" hits="0" branch="false"/>
+      </lines>
+    </class>
+    <class name="visual.ts" filename="src\visual.ts" line-rate="0.23809999999999998" branch-rate="0">
+      <methods>
+        <method name="(anonymous_0)" hits="1" signature="()V">
+          <lines>
+            <line number="34" hits="1"/>
+          </lines>
+        </method>
+        <method name="(anonymous_1)" hits="0" signature="()V">
+          <lines>
+            <line number="48" hits="0"/>
+          </lines>
+        </method>
+        <method name="(anonymous_2)" hits="0" signature="()V">
+          <lines>
+            <line number="90" hits="0"/>
+          </lines>
+        </method>
+      </methods>
+      <lines>
+        <line number="35" hits="1" branch="false"/>
+        <line number="38" hits="1" branch="false"/>
+        <line number="40" hits="1" branch="false"/>
+        <line number="42" hits="1" branch="false"/>
+        <line number="44" hits="1" branch="false"/>
+        <line number="49" hits="0" branch="false"/>
+        <line number="50" hits="0" branch="false"/>
+        <line number="51" hits="0" branch="false"/>
+        <line number="53" hits="0" branch="false"/>
+        <line number="54" hits="0" branch="false"/>
+        <line number="56" hits="0" branch="false"/>
+        <line number="57" hits="0" branch="false"/>
+        <line number="58" hits="0" branch="false"/>
+        <line number="60" hits="0" branch="false"/>
+        <line number="61" hits="0" branch="false"/>
+        <line number="62" hits="0" branch="false"/>
+        <line number="64" hits="0" branch="false"/>
+        <line number="73" hits="0" branch="false"/>
+        <line number="81" hits="0" branch="false"/>
+        <line number="91" hits="0" branch="true" condition-coverage="0% (0/2)"/>
+        <line number="92" hits="0" branch="false"/>
+      </lines>
+    </class>
   </packages>
 </coverage>
