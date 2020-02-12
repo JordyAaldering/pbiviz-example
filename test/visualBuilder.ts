@@ -1,12 +1,6 @@
-import {
-    Visual as VisualClass
-} from "../src/visual";
-
-import {
-    VisualBuilderBase
-} from "powerbi-visuals-utils-testutils";
-
 import powerbi from "powerbi-visuals-api";
+import { Visual as VisualClass } from "../src/visual";
+import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 
 export class VisualBuilder extends VisualBuilderBase<VisualClass> {
