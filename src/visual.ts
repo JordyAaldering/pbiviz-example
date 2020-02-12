@@ -1,6 +1,7 @@
 "use strict";
 
 import "core-js/stable";
+import "../style/visual.less";
 
 import powerbi from "powerbi-visuals-api";
 import IVisual = powerbi.extensibility.visual.IVisual;
@@ -31,58 +32,74 @@ export interface ViewModel {
 };
 
 export class Visual implements IVisual {
-    private host: IVisualHost;
     private settings: VisualSettings;
-    private visualSettings: VisualSettings;
 
     private svg: Selection<SVGElement>;
-    private container: Selection<SVGElement>;
+    private chartContainer: Selection<SVGElement>;
     private xAxisContainer: Selection<SVGElement>;
     private yAxisContainer: Selection<SVGElement>;
 
+    private titleText: Selection<SVGElement>;
+    private labelText: Selection<SVGElement>;
+
     constructor(options: VisualConstructorOptions) {
+        // Add root svg element.
         this.svg = d3.select(options.element)
             .append("svg")
-            .classed("svg", true);
+                .classed("svg", true);
 
-        this.container = this.svg
+        // Add chart and axes containers.
+        this.chartContainer = this.svg
             .append("g")
-            .classed("container", true);
-
-        this.xAxisContainer = this.container
-            .append("g")
-            .classed("container", true);
+                .classed("container", true);
         
-        this.yAxisContainer = this.container
+        this.xAxisContainer = this.chartContainer
             .append("g")
-            .classed("container", true);
+                .classed("container", true);
+        
+        this.yAxisContainer = this.chartContainer
+            .append("g")
+                .classed("container", true);
+
+        // Add text labels.
+        this.titleText = this.svg
+            .append("text")
+                .attr("y", 40)
+                .classed("title", true);
+        
+        this.labelText = this.xAxisContainer
+            .append("text")
+                .attr("y", 35)
+                .classed("label", true);
     }
 
     public update(options: VisualUpdateOptions) {
-        let viewModel = this.getViewModel(options);
-        this.visualSettings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
+        const viewModel = this.getViewModel(options);
+        this.settings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
 
-        let width: number = options.viewport.width;
-        let height: number = options.viewport.height;
-
-        const margin = { top: 40, right: 15, bottom: 40, left: 185 };
+        const margin = { 
+            top: 45,
+            right: 15,
+            bottom: 45,
+            left: 100
+        };
+        
+        const width: number = options.viewport.width;
+        const height: number = options.viewport.height;
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
 
-        this.svg
-            .attr("width", width)
-            .attr("height", height);
+        this.svg.attr("width", width).attr("height", height);
+        this.chartContainer.attr("transform", `translate(${margin.left}, ${margin.top})`);
+        this.xAxisContainer.attr("transform", `translate(0, ${innerHeight})`);
 
-        this.container
-            .attr("transform", `translate(${margin.left}, ${margin.top})`)
-            .append("text")
-                .attr("x", innerWidth * 0.5)
-                .attr("y", -5)
-                .text("title")
-                .classed("title", true);
+        this.titleText
+            .attr("x", innerWidth * 0.5)
+            .text(this.settings.chart.chartTitle);
                 
-        this.xAxisContainer
-            .attr("transform", `translate(0, ${innerHeight})`);
+        this.labelText
+            .attr("x", innerWidth * 0.5)
+            .text(this.settings.chart.chartXLabel);
 
         const xScale = d3.scaleLinear()
             .domain([0, viewModel.maxValue])
@@ -103,15 +120,8 @@ export class Visual implements IVisual {
 
         this.xAxisContainer.selectAll(".domain").remove();
         this.yAxisContainer.selectAll(".domain, .tick line").remove();
-
-        this.xAxisContainer.append("text")
-            .attr("x", innerWidth * 0.5)
-            .attr("y", 30)
-            .attr("fill", "black")
-            .text("x label")
-            .classed("axis-label", true);
         
-        this.container.selectAll("rect")
+        this.chartContainer.selectAll("rect")
             .data(viewModel.dataPoints).enter()
             .append("rect")
                 .attr("width", d => xScale(d.value))
@@ -147,7 +157,7 @@ export class Visual implements IVisual {
     }
 
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-        const settings: VisualSettings = this.visualSettings || <VisualSettings>VisualSettings.getDefault();
+        const settings: VisualSettings = this.settings || <VisualSettings>VisualSettings.getDefault();
         return VisualSettings.enumerateObjectInstances(settings, options);
     }
 }

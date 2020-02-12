@@ -13,25 +13,19 @@
     ],
     "objects":
     {
-        "circle": {
-            "displayName": "Circle",
+        "chart": {
+            "displayName": "Chart",
             "properties": {
-                "circleColor": {
-                    "displayName": "Color",
-                    "description": "The fill color of the circle.",
+                "chartTitle": {
+                    "displayName": "Title",
                     "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
+                        "text": true
                     }
                 },
-                "circleThickness": {
-                    "displayName": "Thickness",
-                    "description": "The circle thickness.",
+                "chartXLabel": {
+                    "displayName": "X Label",
                     "type": {
-                        "numeric": true
+                        "text": true
                     }
                 }
             }

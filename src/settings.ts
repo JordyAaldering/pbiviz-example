@@ -4,10 +4,10 @@ import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 
 export class VisualSettings extends DataViewObjectsParser {
-  public circle: CircleSettings = new CircleSettings();
+  public chart: ChartSettings = new ChartSettings();
 }
 
-export class CircleSettings {
-  public circleColor: string = "white";
-  public circleThickness: number = 2;
+export class ChartSettings {
+  public chartTitle: string = "";
+  public chartXLabel: string = "";
 }
