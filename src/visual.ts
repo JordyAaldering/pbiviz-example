@@ -11,17 +11,20 @@ import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 
 import DataView = powerbi.DataView;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
 
 import * as d3 from "d3";
+
 import { VisualSettings } from "./settings";
+import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
+import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
 export class Visual implements IVisual {
     private host: IVisualHost;
     private settings: VisualSettings;
+    private visualSettings: VisualSettings;
 
     private svg: Selection<SVGElement>;
     private container: Selection<SVGElement>;
@@ -50,18 +53,24 @@ export class Visual implements IVisual {
 
         this.svg.attr("width", width);
         this.svg.attr("height", height);
-
+        
         let radius: number = Math.min(width, height) / 2.2;
+        let fontSizeValue: number = Math.min(width, height) / 5;
+        let fontSizeLabel: number = fontSizeValue / 4;
+
+        this.visualSettings = VisualSettings.parse<VisualSettings>(dataView);
+        this.visualSettings.circle.circleThickness = Math.max(0, this.visualSettings.circle.circleThickness);
+        this.visualSettings.circle.circleThickness = Math.min(10, this.visualSettings.circle.circleThickness);
+
         this.circle
-            .style("fill", "white")
+            .style("fill", this.visualSettings.circle.circleColor)
             .style("fill-opacity", 0.5)
             .style("stroke", "black")
-            .style("stroke-width", 2)
+            .style("stroke-width", this.visualSettings.circle.circleThickness)
             .attr("r", radius)
             .attr("cx", width / 2)
             .attr("cy", height / 2);
         
-        let fontSizeValue: number = Math.min(width, height) / 5;
         this.textValue
             .text(<string>dataView.single.value)
             .attr("x", "50%")
@@ -70,7 +79,6 @@ export class Visual implements IVisual {
             .attr("text-anchor", "middle")
             .style("font-size", fontSizeValue + "px");
         
-        let fontSizeLabel: number = fontSizeValue / 4;
         this.textLabel
             .text(dataView.metadata.columns[0].displayName)
             .attr("x", "50%")
@@ -80,7 +88,8 @@ export class Visual implements IVisual {
             .style("font-size", fontSizeLabel + "px");
     }
 
-    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
-        return VisualSettings.enumerateObjectInstances(this.settings || VisualSettings.getDefault(), options);
+    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
+        const settings: VisualSettings = this.visualSettings || <VisualSettings>VisualSettings.getDefault();
+        return VisualSettings.enumerateObjectInstances(settings, options);
     }
 }
