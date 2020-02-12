@@ -4,7 +4,11 @@
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
     "package": "pbiviz package",
-    "lint": "tslint -c tslint.json -p tsconfig.json"
+    "typings": "node node_modules/typings/dist/bin.js i",
+    "lintOld": "tslint -c tslint.json -p tsconfig.json",
+    "lint": "tslint -r \"node_modules/tslint-microsoft-contrib\"  \"+(src|test)/**/*.ts\"",
+    "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
+    "test": "karma start"
   },
   "dependencies": {
     "core-js": "^3.6.4",
@@ -31,6 +35,7 @@
     "karma-coverage-istanbul-reporter": "^2.1.1",
     "karma-jasmine": "^3.1.1",
     "karma-junit-reporter": "^2.0.1",
+    "karma-remap-istanbul": "^0.6.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-typescript": "^4.1.1",
     "karma-typescript-preprocessor": "^0.4.0",
