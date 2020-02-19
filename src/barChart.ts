@@ -1,8 +1,6 @@
 "use strict";
 
-import "../style/visual.less";
 import * as d3 from "d3";
-
 import { VisualSettings } from "./settings";
 import { ViewModel, Model } from "./model";
 
