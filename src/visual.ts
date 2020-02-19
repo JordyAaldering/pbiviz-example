@@ -1,6 +1,10 @@
 "use strict";
 
-import "../style/visual.less";
+try {
+    require("./../style/visual.less");
+} catch {
+    console.log("./../style/visual.less not found.")
+}
 
 import { VisualSettings } from "./settings";
 import { LineChart } from "./charts/lineChart";

@@ -1,6 +1,6 @@
 import powerbi from "powerbi-visuals-api";
 import { VisualBuilder } from "./VisualBuilder";
-import { ViewModel, Visual as VisualClass } from "../src/visual";
+import { Visual as VisualClass } from "../src/visual";
 
 describe("Visual", () => {
     let builder: VisualBuilder;
