@@ -3,7 +3,7 @@
 try {
     require("./../style/visual.less");
 } catch {
-    console.log("./../style/visual.less not found.")
+    console.log("./../style/visual.less not found; Ignoring.")
 }
 
 import { VisualSettings } from "./settings";
