@@ -8,14 +8,12 @@ import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructor
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import ISelectionManager = powerbi.extensibility.ISelectionManager;
-import ISelectionId = powerbi.extensibility.ISelectionId;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
 export interface DataPoint {
     date: number;
     value: number;
-    identity: ISelectionId;
 };
 
 export interface Line {
@@ -145,11 +143,8 @@ export class LineChart {
 
             for (let j = 0; j < values.values.length; j++) {
                 viewModel.lines[i].points.push({
-                    date: <number>(categories.values[j] || 0),
-                    value: <number>values.values[j],
-                    identity: this.host.createSelectionIdBuilder()
-                        .withCategory(categories, j)
-                        .createSelectionId()
+                    date: <number>categories.values[j],
+                    value: <number>values.values[j]
                 });
             }
 
