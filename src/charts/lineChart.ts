@@ -66,6 +66,7 @@ export class LineChart {
         // Load data and settings.
         this.settings = settings;
         const viewModel: ViewModel = this.getViewModel(options.dataViews);
+
         const data = viewModel.lines[0].points;
         
         // Calculate dimensions.
@@ -81,9 +82,10 @@ export class LineChart {
         this.chartContainer
             .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`)
 
-        const xScale = d3.scaleTime()
+        const xScale = d3.scaleLinear()
             .domain(d3.extent(data, d => d.date))
-            .range([0, innerWidth]);
+            .range([0, innerWidth])
+            .nice();
         
         const yScale = d3.scaleLinear()
             .domain(d3.extent(data, d => d.value))
