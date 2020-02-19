@@ -34,16 +34,6 @@
   fill: var(--text-main-color);
   font-size: 20px;
 }
-text {
-  pointer-events: none;
-  cursor: default;
-}
-.line-path {
-  fill: none;
-  stroke: var(--data-color);
-  stroke-width: 5;
-  stroke-linejoin: round;
-}
 
 
 /*# sourceMappingURL=visual.css.map*/

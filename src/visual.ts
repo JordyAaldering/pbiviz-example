@@ -1,10 +1,6 @@
 "use strict";
 
-try {
-    require("./../style/visual.less");
-} catch {
-    console.log("./../style/visual.less not found; ignoring.")
-}
+import "./../style/visual.less";
 
 import * as d3 from "d3";
 import { VisualSettings } from "./settings";
