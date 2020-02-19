@@ -7,6 +7,8 @@ try {
 }
 
 import { VisualSettings } from "./settings";
+
+import { BarChart } from "./charts/barChart";
 import { LineChart } from "./charts/lineChart";
 
 import powerbi from "powerbi-visuals-api";
@@ -15,22 +17,14 @@ import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructor
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
-import ISelectionManager = powerbi.extensibility.ISelectionManager;
 
 export class Visual implements IVisual {
-    private host: IVisualHost;
-    private selection: ISelectionManager;
     private settings: VisualSettings;
-
-    private chart: LineChart;
+    private chart: BarChart;
 
     constructor(options: VisualConstructorOptions) {
-        this.host = options.host;
-        this.selection = this.host.createSelectionManager();
-
-        this.chart = new LineChart;
-        this.chart.construct(this.host, this.selection, options);
+        this.chart = new BarChart;
+        this.chart.construct(options.host, options);
     }
 
     public update(options: VisualUpdateOptions) {

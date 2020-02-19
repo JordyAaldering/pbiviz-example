@@ -7,7 +7,6 @@ import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
-import ISelectionManager = powerbi.extensibility.ISelectionManager;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
@@ -29,7 +28,6 @@ export interface ViewModel {
 
 export class LineChart {
     private host: IVisualHost;
-    private selection: ISelectionManager;
     private settings: VisualSettings;
 
     private svg: Selection<SVGElement>;
@@ -39,9 +37,8 @@ export class LineChart {
 
     private margin = { top: 25, right: 25, bottom: 25, left: 25 };
 
-    public construct(host: IVisualHost, selection: ISelectionManager, options: VisualConstructorOptions) {
+    public construct(host: IVisualHost, options: VisualConstructorOptions) {
         this.host = host;
-        this.selection = selection;
 
         // Add root svg element.
         this.svg = d3.select(options.element)
