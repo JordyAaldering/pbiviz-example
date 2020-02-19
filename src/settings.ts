@@ -9,5 +9,4 @@ export class VisualSettings extends DataViewObjectsParser {
 
 export class ChartSettings {
   public chartTitle: string = "";
-  public chartXLabel: string = "";
 }

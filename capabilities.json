@@ -21,12 +21,6 @@
                     "type": {
                         "text": true
                     }
-                },
-                "chartXLabel": {
-                    "displayName": "X Label",
-                    "type": {
-                        "text": true
-                    }
                 }
             }
         }
