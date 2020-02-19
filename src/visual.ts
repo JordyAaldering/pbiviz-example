@@ -3,7 +3,7 @@
 import "../style/visual.less";
 
 import { VisualSettings } from "./settings";
-import { BarChart } from "./charts/barChart";
+import { LineChart } from "./charts/lineChart";
 
 import powerbi from "powerbi-visuals-api";
 import IVisual = powerbi.extensibility.visual.IVisual;
@@ -19,13 +19,13 @@ export class Visual implements IVisual {
     private selection: ISelectionManager;
     private settings: VisualSettings;
 
-    private chart: BarChart;
+    private chart: LineChart;
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
         this.selection = this.host.createSelectionManager();
 
-        this.chart = new BarChart;
+        this.chart = new LineChart;
         this.chart.construct(this.host, this.selection, options);
     }
 
