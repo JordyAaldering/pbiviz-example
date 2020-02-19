@@ -1,16 +1,27 @@
 "use strict";
 
 import * as d3 from "d3";
-import { VisualSettings } from "./settings";
-import { ViewModel, Model } from "./model";
+import { VisualSettings } from "../settings";
 
 import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import ISelectionManager = powerbi.extensibility.ISelectionManager;
+import ISelectionId = powerbi.extensibility.ISelectionId;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
+
+export interface DataPoint {
+    category: string;
+    value: number;
+    identity: ISelectionId;
+};
+
+export interface ViewModel {
+    dataPoints: DataPoint[];
+    maxValue: number;
+};
 
 export class BarChart {
     private host: IVisualHost;
@@ -57,7 +68,7 @@ export class BarChart {
     public update(settings: VisualSettings, options: VisualUpdateOptions) {
         // Load data and settings.
         this.settings = settings;
-        const viewModel: ViewModel = Model.getViewModel(this.host, options.dataViews);
+        const viewModel: ViewModel = this.getViewModel(options.dataViews);
 
         // Calculate dimensions.
         const width: number = options.viewport.width;
@@ -137,5 +148,34 @@ export class BarChart {
 
         bars.exit()
             .remove();
+    }
+
+    private getViewModel(dataViews: powerbi.DataView[]): ViewModel {
+        let viewModel: ViewModel = {
+            dataPoints: [],
+            maxValue: 0
+        };
+
+        if (!dataViews || !dataViews[0] || !dataViews[0].categorical || 
+            !dataViews[0].categorical.categories || !dataViews[0].categorical.values) {
+            return viewModel;
+        }
+
+        let view = dataViews[0].categorical;
+        let categories = view.categories[0];
+        let values = view.values[0];
+
+        for (let i = 0; i < Math.max(categories.values.length, values.values.length); i++) {
+            viewModel.dataPoints.push({
+                category: <string>categories.values[i],
+                value: <number>values.values[i],
+                identity: this.host.createSelectionIdBuilder()
+                    .withCategory(categories, i)
+                    .createSelectionId()
+            });
+        }
+
+        viewModel.maxValue = d3.max(viewModel.dataPoints, d => d.value);
+        return viewModel;
     }
 }

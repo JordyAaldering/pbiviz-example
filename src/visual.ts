@@ -3,7 +3,7 @@
 import "../style/visual.less";
 
 import { VisualSettings } from "./settings";
-import { BarChart } from "./barChart";
+import { BarChart } from "./charts/barChart";
 
 import powerbi from "powerbi-visuals-api";
 import IVisual = powerbi.extensibility.visual.IVisual;
