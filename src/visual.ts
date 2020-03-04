@@ -1,21 +1,22 @@
 "use strict";
 
-import "./../style/visual.less";
+"./../style/visual.less";
 
 import * as d3 from "d3";
 import { VisualSettings } from "./settings";
 
 import powerbi from "powerbi-visuals-api";
-import IVisual = powerbi.extensibility.visual.IVisual;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-import ISelectionManager = powerbi.extensibility.ISelectionManager;
-import ISelectionId = powerbi.extensibility.ISelectionId;
+type IVisual = powerbi.extensibility.visual.IVisual;
+type IVisualHost = powerbi.extensibility.visual.IVisualHost;
 
-import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+type VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
+type VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
+type ISelectionManager = powerbi.extensibility.ISelectionManager;
+type ISelectionId = powerbi.extensibility.ISelectionId;
+
+type VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
+type EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
@@ -118,7 +119,7 @@ export class Visual implements IVisual {
 
     private setTitle() {
         if (this.settings.chart.chartTitle.length > 0) {
-            this.margin.top = 50;
+            this.margin.top = 40;
             this.titleText
                 .attr("x", this.width * 0.5)
                 .text(this.settings.chart.chartTitle);

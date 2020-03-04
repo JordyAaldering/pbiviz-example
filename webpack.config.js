@@ -24,7 +24,7 @@ module.exports = {
                 enforce: 'post',
                 include: /(src)/,
                 exclude: /(node_modules|resources\/js\/vendor)/,
-                loader: 'istanbul-instrumenter-loader',
+                loader: 'babel',
                 options: { esModules: true }
             },
             {
