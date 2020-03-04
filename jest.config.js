@@ -24,12 +24,12 @@ module.exports = {
   // collectCoverageFrom: undefined,
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  coveragePathIgnorePatterns: [
+    '\\\\node_modules\\\\',
+  ],
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -168,20 +168,28 @@ module.exports = {
 
   // A map from regular expressions to paths to transformers
   transform: {
+    '^.+\\.js?$': 'babel-jest',
     '^.+\\.ts?$': 'ts-jest',
-    ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub"
+    '^.+\\.(css|less)$': 'jest-transform-stub',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "\\\\node_modules\\\\",
-  // ],
+  transformIgnorePatterns: [
+    "node_modules/(?!(powerbi-visuals-api"
+      + "|powerbi-visuals-utils-dataviewutils"
+      + "|powerbi-visuals-utils-formattingutils"
+      + "|powerbi-visuals-utils-testutils"
+      + "|powerbi-visuals-utils-typeutils"
+    + ")/)",
+  ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
-  // unmockedModulePathPatterns: undefined,
+  unmockedModulePathPatterns: [
+    './node_modules/d3.*/dist/',
+  ],
 
   // Indicates whether each individual test should be reported during the run
-  // verbose: undefined,
+  verbose: true,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
   // watchPathIgnorePatterns: [],
