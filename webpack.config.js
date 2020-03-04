@@ -1,10 +1,10 @@
 const path = require('path');
-const webpack = require("webpack");
+const webpack = require('webpack');
 
 module.exports = {
     devtool: 'source-map',
     mode: 'development',
-    optimization : {
+    optimization: {
         concatenateModules: false,
         minimize: false
     },
@@ -47,13 +47,13 @@ module.exports = {
         ]
     },
     externals: {
-        "powerbi-visuals-api": '{}'
+        'powerbi-visuals-api': '{}'
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js', '.css']
     },
     output: {
-        path: path.resolve(__dirname, ".tmp/test")
+        path: path.resolve(__dirname, '.tmp/test')
     },
     plugins: [
         new webpack.ProvidePlugin({
