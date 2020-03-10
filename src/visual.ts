@@ -1,10 +1,8 @@
-"use strict";
+'use strict';
 
-import "./../style/visual.less";
+import './../style/visual.less';
 
-import * as d3 from "d3";
-
-import powerbi from "powerbi-visuals-api";
+import powerbi from 'powerbi-visuals-api';
 
 import IVisual = powerbi.extensibility.visual.IVisual;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
@@ -17,7 +15,8 @@ import ISelectionId = powerbi.extensibility.ISelectionId;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
-import { VisualSettings } from "./settings";
+import * as d3 from 'd3';
+import { VisualSettings } from './settings';
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
@@ -38,98 +37,127 @@ export class Visual implements IVisual {
     private settings: VisualSettings;
 
     private svg: Selection<SVGElement>;
-    private chartContainer: Selection<SVGElement>;
+    private barContainer: Selection<SVGElement>;
     private xAxisContainer: Selection<SVGElement>;
     private yAxisContainer: Selection<SVGElement>;
-
-    private titleText: Selection<SVGElement>;
 
     private xScale: d3.ScaleLinear<number, number>;
     private yScale: d3.ScaleBand<string>;
     private xAxis: d3.Axis<number | { valueOf(): number; }>;
 
-    private margin = { top: 15, right: 15, bottom: 15, left: 100 };
     private width: number;
     private height: number;
     private innerWidth: number;
     private innerHeight: number;
+
+    private margin = { top: 15, right: 15, bottom: 15, left: 100 };
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
         this.selection = this.host.createSelectionManager();
 
         this.createContainers(options.element);
-        this.createLabels();
     }
 
     private createContainers(sourceElement: HTMLElement) {
         this.svg = d3.select(sourceElement)
-            .append("svg")
-                .classed("svg", true);
+            .append('svg')
+            .classed('svg', true);
 
-        this.chartContainer = this.svg
-            .append("g")
-                .classed("container", true);
-        
-        this.xAxisContainer = this.chartContainer
-            .append("g")
-                .classed("container", true);
-        
-        this.yAxisContainer = this.chartContainer
-            .append("g")
-                .classed("container", true);
-    }
+        this.barContainer = this.svg
+            .append('g')
+            .classed('container', true);
 
-    private createLabels() {
-        this.titleText = this.svg
-            .append("text")
-                .attr("y", 40)
-                .classed("title", true);
+        this.xAxisContainer = this.barContainer
+            .append('g')
+            .classed('container', true);
+
+        this.yAxisContainer = this.barContainer
+            .append('g')
+            .classed('container', true);
     }
 
     public update(options: VisualUpdateOptions) {
         this.settings = VisualSettings.parse<VisualSettings>(options.dataViews[0]);
 
-        this.calculateSizes(options);
+        this.calculateSizes(options.viewport);
         this.resizeContainers();
-        this.setTitle();
-        
+
         const viewModel: ViewModel = this.getViewModel(options.dataViews);
         this.createAxes(viewModel);
         this.createBars(viewModel);
     }
 
-    private calculateSizes(options: VisualUpdateOptions) {
-        this.width = options.viewport.width;
-        this.height = options.viewport.height;
+    private calculateSizes(viewport: powerbi.IViewport) {
+        this.width = viewport.width;
+        this.height = viewport.height;
         this.innerWidth = this.width - this.margin.left - this.margin.right;
         this.innerHeight = this.height - this.margin.top - this.margin.bottom;
     }
 
     private resizeContainers() {
         this.svg
-            .attr("width", this.width)
-            .attr("height", this.height);
+            .attr('width', this.width)
+            .attr('height', this.height);
 
-        this.chartContainer
-            .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`);
-        
+        this.barContainer
+            .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
+
         this.xAxisContainer
-            .attr("transform", `translate(0, ${this.innerHeight})`);
+            .attr('transform', `translate(0, ${this.innerHeight})`);
     }
 
-    private setTitle() {
-        if (this.settings.chart.chartTitle.length > 0) {
-            this.margin.top = 40;
-            this.titleText
-                .attr("x", this.width * 0.5)
-                .text(this.settings.chart.chartTitle);
-        }
-        else {
-            this.margin.top = 15;
-            this.titleText
-                .text("");
-        }
+    private createAxes(viewModel: ViewModel) {
+        this.xScale = d3.scaleLinear()
+            .domain([0, viewModel.maxValue])
+            .range([0, this.innerWidth]);
+
+        this.xAxis = d3.axisBottom(this.xScale)
+            .tickFormat(d3.format('.1s'))
+            .tickSize(-this.innerHeight);
+
+        this.xAxisContainer
+            .call(this.xAxis)
+            .selectAll('.domain')
+            .remove();
+
+        this.yScale = d3.scaleBand()
+            .domain(viewModel.dataPoints.map(d => d.category))
+            .range([0, this.innerHeight])
+            .padding(0.1);
+
+        this.yAxisContainer
+            .call(d3.axisLeft(this.yScale))
+            .selectAll('.domain, .tick line')
+            .remove();
+    }
+
+    private createBars(viewModel: ViewModel) {
+        const barSelection = this.barContainer
+            .selectAll('.bar')
+            .data(viewModel.dataPoints)
+            .enter();
+
+        const bars = barSelection
+            .append('rect')
+            .attr('width', d => this.xScale(d.value))
+            .attr('height', this.yScale.bandwidth())
+            .attr('y', d => this.yScale(d.category))
+            .classed('bar', true);
+
+        bars.on('click', d => {
+            this.selection.select(d.identity, true)
+                .then(ids => {
+                    bars.style('fill-opacity', d =>
+                        ids.length > 0
+                            ? ids.indexOf(d.identity) >= 0 ? 1.0 : 0.5
+                            : 1.0
+                    );
+                });
+        });
+
+        bars.exit()
+            .remove();
     }
 
     private getViewModel(dataViews: powerbi.DataView[]): ViewModel {
@@ -163,60 +191,11 @@ export class Visual implements IVisual {
     }
 
     private hasData(dataViews: powerbi.DataView[]): boolean {
-        return dataViews 
+        return dataViews
             && dataViews[0]
             && dataViews[0].categorical
             && dataViews[0].categorical.categories
             && dataViews[0].categorical.values != null;
-    }
-
-    private createAxes(viewModel: ViewModel) {
-        this.xScale = d3.scaleLinear()
-            .domain([0, viewModel.maxValue])
-            .range([0, this.innerWidth]);
-
-        this.yScale = d3.scaleBand()
-            .domain(viewModel.dataPoints.map(d => d.category))
-            .range([0, this.innerHeight])
-            .padding(0.1);
-        
-        this.xAxis = d3.axisBottom(this.xScale)
-            .tickFormat(d3.format(".1s"))
-            .tickSize(-this.innerHeight);
-    
-        this.xAxisContainer
-            .call(this.xAxis)
-            .selectAll(".domain")
-                .remove();
-        
-        this.yAxisContainer
-            .call(d3.axisLeft(this.yScale))
-            .selectAll(".domain, .tick line")
-                .remove();
-    }
-
-    private createBars(viewModel: ViewModel) {
-        const bars = this.chartContainer.selectAll(".bar")
-            .data(viewModel.dataPoints).enter()
-            .append("rect")
-                .attr("width", d => this.xScale(d.value))
-                .attr("height", this.yScale.bandwidth())
-                .attr("y", d => this.yScale(d.category))
-                .classed("bar", true);
-        
-        bars.on("click", d => {
-            this.selection.select(d.identity, true)
-                .then(ids => {
-                    bars.style("fill-opacity", d =>
-                        ids.length > 0 
-                            ? ids.indexOf(d.identity) >= 0 ? 1.0 : 0.5
-                            : 1.0
-                    );
-                });
-        });
-
-        bars.exit()
-            .remove();
     }
 
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {

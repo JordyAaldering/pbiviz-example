@@ -11,20 +11,6 @@
             "kind": "Measure"
         }
     ],
-    "objects":
-    {
-        "chart": {
-            "displayName": "Chart",
-            "properties": {
-                "chartTitle": {
-                    "displayName": "Title",
-                    "type": {
-                        "text": true
-                    }
-                }
-            }
-        }
-    },
     "dataViewMappings": [
         {
             "conditions": [
