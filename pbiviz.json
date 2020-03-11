@@ -6,8 +6,8 @@
         "visualClassName": "Visual",
         "version": "1.0.0",
         "description": "A simple Power BI example.",
-        "supportUrl": "https://github.com/JordyAaldering/pbiviz-example/issues",
-        "gitHubUrl": "https://github.com/JordyAaldering/pbiviz-example"
+        "supportUrl": "https://github.com/JordyAaldering/Software-Engineering/issues",
+        "gitHubUrl": "https://github.com/JordyAaldering/Software-Engineering"
     },
     "apiVersion": "2.6.0",
     "author": {

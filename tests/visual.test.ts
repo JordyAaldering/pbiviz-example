@@ -1,5 +1,11 @@
-const visual = require('../src/visual');
+import { Visual } from '../src/visual';
 
-test('adds 1 + 2 to equal 3', () => {
-  expect(1 + 2).toBe(3);
+import { VisualBuilder } from './VisualBuilder';
+import { VisualDataBuilder } from "./visualDataBuilder";
+
+test('root element is created', () => {
+  let visualBuilder: VisualBuilder = new VisualBuilder(500, 500);
+  let visualDataBuilder: VisualDataBuilder = new VisualDataBuilder();
+
+  expect(visualBuilder.mainElement).toBeDefined;
 });
