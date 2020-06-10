@@ -1,0 +1,106 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Categories",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measures",
+            "name": "measure",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Series",
+            "name": "series",
+            "kind": "Grouping"
+        }
+    ],
+    "objects": {
+        "margins": {
+            "displayName": "Margins",
+            "properties": {
+                "top": {
+                    "displayName": "Top",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "bottom": {
+                    "displayName": "Bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "left": {
+                    "displayName": "Left",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "right": {
+                    "displayName": "Right",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "normalize": {
+            "displayName": "Normalize",
+            "properties": {
+                "show": {
+                    "displayName": "Enabled",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Labels",
+            "properties": {
+                "labelX": {
+                    "displayName": "X Axis Label",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "labelY": {
+                    "displayName": "Y Axis Label",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "labelVectors": {
+                    "displayName": "Show Vector Labels",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    }
+                },
+                "values": {
+                    "group": {
+                        "by": "series",
+                        "select": [{
+                                "for": {
+                                    "in": "measure"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

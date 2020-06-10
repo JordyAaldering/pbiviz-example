@@ -1,0 +1,25 @@
+{
+    "visual": {
+        "name": "loadingPlot",
+        "displayName": "Loading Plot",
+        "guid": "loadingPlot030ADAA618BC4DECB400F839023ED2A3",
+        "visualClassName": "Visual",
+        "version": "1.0.0",
+        "description": "Loading Plot",
+        "supportUrl": "https://github.com/GipHouse/Corbion-2020/issues",
+        "gitHubUrl": "https://github.com/GipHouse/Corbion-2020"
+    },
+    "apiVersion": "2.6.0",
+    "author": {
+        "name": "Corbion",
+        "email": "2020spring-corbion@giphouse.nl"
+    },
+    "assets": {
+        "icon": "assets/icon.png"
+    },
+    "externalJS": null,
+    "style": "style/visual.less",
+    "capabilities": "capabilities.json",
+    "dependencies": null,
+    "stringResources": []
+}
