@@ -1,6 +1,0 @@
-# Auto detect text files and perform LF normalization.
-* text=auto
-
-# Exclude webpack statistics from language details.
-webpack.statistics.dev.html linguist-vendored
-webpack.statistics.prod.html linguist-vendored
